@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) {
@@ -13,5 +14,26 @@ public class Main {
 
         Simulador simulador = new Simulador(3, referencias);
         simulador.iniciarSimulador();
+
+        /*
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.println("Ingrese el numero de marcos de pagina: ");
+        int marcos = scanner.nextInt();
+
+
+        ArrayList<Integer> referencias = new ArrayList<>();
+        System.out.println("Ingrese el numero de referencias: ");
+        int numReferencias = scanner.nextInt();
+
+        for(int i = 0; i < numReferencias; i++){
+            referencias.add((int) Math.random() * 10);
+        }
+
+
+        Simulador simulador = new Simulador(marcos, referencias);
+        simulador.iniciarSimulador();
+        */ 
+
     }
 }
