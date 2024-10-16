@@ -25,6 +25,7 @@ public class Main {
                 case 1:
                     Simulador.generarReferencias();
                     break;
+                    //Archivos/caso2-parrots_mod.bmp
                 case 2:
                     calcularDatos();
                     break;

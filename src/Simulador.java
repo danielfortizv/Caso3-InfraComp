@@ -59,7 +59,6 @@ public class Simulador {
         manejadorMemoria.imprimirEstadisticas();
     }
 
-    
     public static void generarReferencias() {
         Scanner scanner = new Scanner(System.in);
         
@@ -81,44 +80,61 @@ public class Simulador {
             // Calcular el número de páginas necesarias para la imagen
             int totalPaginas = (int) Math.ceil((double) tamanoTotalImagen / tamanoPagina);
             
-            // Calcular el número total de referencias
-            int totalReferencias = filas * columnas * 3; // Cada píxel tiene 3 colores (R, G, B)
+            // Calcular el número total de referencias (cada píxel tiene 3 colores)
+            int totalReferencias = filas * columnas * 3; // Referencias para la imagen
+            int mensajeReferencias = (totalReferencias / 15) * 3; // Tres referencias de mensaje cada 15 referencias de imagen
+            int referenciasTotales = totalReferencias + mensajeReferencias;
             
             // Generar el archivo de referencias
             FileWriter writer = new FileWriter("referencias.txt");
 
             // Escribir los datos iniciales en el archivo
-            writer.write("Datos archivo\n");
-            writer.write("Comentario\n");
             writer.write("P=" + tamanoPagina + "\n");
             writer.write("NF=" + filas + "\n");
             writer.write("NC=" + columnas + "\n");
-            writer.write("NR=" + totalReferencias + "\n");
+            writer.write("NR=" + referenciasTotales + "\n");  // Número de referencias basado en la imagen y mensaje
             writer.write("NP=" + totalPaginas + "\n");
 
-            // Escribir las referencias para la matriz de imagen
+            // Variables para controlar las referencias y el mensaje
             int referenciaIndex = 0; // Índice de referencia para desplazamiento dentro de la página
+            int mensajeIndex = 0; // Índice para el vector de mensaje
+            boolean alternar = false; // Controla la alternancia entre imagen y mensaje
+            int secuenciaImagen = 0; // Para contar hasta 16 referencias de imagen
+
+            // Suposición: El vector de mensaje usa una página distinta a la imagen
+            int mensajePaginaBase = totalPaginas + 1; // El mensaje empieza después de las páginas de la imagen
+
+            // Bucle para procesar toda la imagen y alternar con el mensaje
             for (int i = 0; i < filas; i++) {
                 for (int j = 0; j < columnas; j++) {
-                    // Para cada color (R, G, B) de cada píxel
+                    // Procesamos los tres colores del píxel: R, G, B
                     String[] colores = {"R", "G", "B"};
-                    for (int k = 0; k < 3; k++) {  // 0 = R, 1 = G, 2 = B
-                        int paginaVirtual = referenciaIndex / tamanoPagina; // Calcular la página virtual
-                        int desplazamiento = referenciaIndex % tamanoPagina; // Calcular el desplazamiento dentro de la página
-                        writer.write("Imagen[" + i + "][" + j + "]." + colores[k] + "," + paginaVirtual + "," + desplazamiento + ",R\n");
-                        referenciaIndex++;
+                    for (int k = 0; k < 3; k++) {
+                        // Escribir las primeras 16 referencias de imagen
+                        if (secuenciaImagen < 16) {
+                            int paginaVirtual = referenciaIndex / tamanoPagina;
+                            int desplazamiento = referenciaIndex % tamanoPagina;
+                            writer.write("Imagen[" + i + "][" + j + "]." + colores[k] + "," + paginaVirtual + "," + desplazamiento + ",R\n");
+                            referenciaIndex++;
+                            secuenciaImagen++;
+                        } else {
+                            // Alternar entre imagen y mensaje
+                            if (alternar) {
+                                // Escribir una referencia al mensaje
+                                writer.write("Mensaje[" + mensajeIndex + "]," + mensajePaginaBase + "," + (mensajeIndex % tamanoPagina) + ",W\n");
+                                mensajeIndex++;
+                                alternar = false; // Alternar de nuevo a imagen
+                            } else {
+                                // Escribir una referencia a la imagen
+                                int paginaVirtual = referenciaIndex / tamanoPagina;
+                                int desplazamiento = referenciaIndex % tamanoPagina;
+                                writer.write("Imagen[" + i + "][" + j + "]." + colores[k] + "," + paginaVirtual + "," + desplazamiento + ",R\n");
+                                referenciaIndex++;
+                                alternar = true; // Alternar de nuevo a mensaje
+                            }
+                        }
                     }
                 }
-            }
-
-            // Escribir las referencias para el vector de mensaje (simulación)
-            // Suponiendo que el vector de mensaje es almacenado después de la imagen
-            int vectorInicioPagina = referenciaIndex / tamanoPagina;
-            for (int l = 0; l < 10; l++) { // Simulamos un mensaje con 10 caracteres
-                int paginaVirtual = (referenciaIndex / tamanoPagina);
-                int desplazamiento = (referenciaIndex % tamanoPagina);
-                writer.write("Mensaje[" + l + "]," + paginaVirtual + "," + desplazamiento + ",W\n");
-                referenciaIndex++;
             }
 
             writer.close();
@@ -129,5 +145,4 @@ public class Simulador {
             e.printStackTrace();
         }
     }
-
 }
