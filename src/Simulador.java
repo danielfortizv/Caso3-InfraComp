@@ -62,7 +62,7 @@ public class Simulador {
     public static void generarReferencias() {
         Scanner scanner = new Scanner(System.in);
         
-        // Obtener datos del usuario
+        // Obtener datos por consola
         System.out.print("Ingrese el tamaño de página (en bytes): ");
         int tamanoPagina = scanner.nextInt();
         
@@ -76,14 +76,14 @@ public class Simulador {
             int filas = imagen.getAlto();    // Obtener el alto de la imagen en píxeles
             int columnas = imagen.getAncho(); // Obtener el ancho de la imagen en píxeles
             int tamanoTotalImagen = filas * columnas * 3; // Total de bytes de la imagen (3 bytes por píxel en formato RGB)
-            
+            int largo = imagen.leerLongitud();
             // Calcular el número de páginas necesarias para la imagen
             int totalPaginas = (int) Math.ceil((double) tamanoTotalImagen / tamanoPagina);
             
             // Calcular el número total de referencias (cada píxel tiene 3 colores)
             int totalReferencias = filas * columnas * 3; // Referencias para la imagen
             int mensajeReferencias = (totalReferencias / 15) * 3; // Tres referencias de mensaje cada 15 referencias de imagen
-            int referenciasTotales = totalReferencias + mensajeReferencias;
+            int referenciasTotales = 16 + (17*largo);
             
             // Generar el archivo de referencias
             FileWriter writer = new FileWriter("referencias.txt");
@@ -110,8 +110,8 @@ public class Simulador {
                     // Procesamos los tres colores del píxel: R, G, B
                     String[] colores = {"R", "G", "B"};
                     for (int k = 0; k < 3; k++) {
-                        // Escribir las primeras 16 referencias de imagen
-                        if (secuenciaImagen < 16) {
+                        // Escribir las primeras 15 referencias de imagen
+                        if (secuenciaImagen < 15) {
                             int paginaVirtual = referenciaIndex / tamanoPagina;
                             int desplazamiento = referenciaIndex % tamanoPagina;
                             writer.write("Imagen[" + i + "][" + j + "]." + colores[k] + "," + paginaVirtual + "," + desplazamiento + ",R\n");
