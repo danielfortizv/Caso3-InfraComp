@@ -1,39 +1,84 @@
-import java.util.ArrayList;
 import java.util.Scanner;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.FileNotFoundException;
+import java.util.Random;
 
 public class Main {
     public static void main(String[] args) {
-        ArrayList<Integer> referencias = new ArrayList<>();
-        referencias.add(1);
-        referencias.add(2);
-        referencias.add(3);
-        referencias.add(4);
-        referencias.add(5);
-        referencias.add(6);
-        referencias.add(7);
-
-        Simulador simulador = new Simulador(3, referencias);
-        simulador.iniciarSimulador();
-
-        /*
         Scanner scanner = new Scanner(System.in);
+        boolean salir = false;
 
-        System.out.println("Ingrese el numero de marcos de pagina: ");
-        int marcos = scanner.nextInt();
+        while (!salir) {
+            System.out.println("Menú:");
+            System.out.println("1. Generar referencias");
+            System.out.println("2. Calcular fallas de página, hits y tiempos");
+            System.out.println("3. Esconder mensaje en imagen");
+            System.out.println("4. Recuperar mensaje de imagen");
+            System.out.println("5. Salir");
 
+            System.out.print("Seleccione una opción: ");
+            int opcion = scanner.nextInt();
 
-        ArrayList<Integer> referencias = new ArrayList<>();
-        System.out.println("Ingrese el numero de referencias: ");
-        int numReferencias = scanner.nextInt();
-
-        for(int i = 0; i < numReferencias; i++){
-            referencias.add((int) Math.random() * 10);
+            switch (opcion) {
+                case 1:
+                    generarReferencias();
+                    break;
+                case 2:
+                    calcularDatos();
+                    break;
+                case 3:
+                    esconderMensaje();
+                    break;
+                case 4:
+                    recuperarMensaje();
+                    break;
+                case 5:
+                    salir = true;
+                    break;
+                default:
+                    System.out.println("Opción no válida");
+            }
         }
+        scanner.close();
+    }
 
+    public static void generarReferencias() {  
+    }
 
-        Simulador simulador = new Simulador(marcos, referencias);
-        simulador.iniciarSimulador();
-        */ 
+    public static void calcularDatos() {
+        Scanner scanner = new Scanner(System.in);
+    
+        // Pedir el número de marcos de página
+        System.out.print("Ingrese el número de marcos de página: ");
+        int marcos = scanner.nextInt();
+        
+        // Pedir el número total de referencias
+        System.out.print("Ingrese el número total de referencias: ");
+        int totalReferencias = scanner.nextInt();
+    
+        // Inicializar ManejadorMemoria con el número de marcos
+        ManejadorMemoria manejadorMemoria = new ManejadorMemoria(marcos);
+    
+        // Simulación de acceso a las páginas
+        for (int i = 0; i < totalReferencias; i++) {
+            // Simulamos que estamos accediendo a una página con ID i
+            int idPagina = i % 100;  // Por ejemplo, IDs de páginas entre 0 y 99
+            boolean modificada = new Random().nextBoolean(); // Simulación aleatoria de si la página fue modificada
+    
+            // Acceder a la página y manejar hit o miss
+            manejadorMemoria.accederPagina(idPagina, modificada);
+        }
+    
+        // Imprimir las estadísticas al final de la simulación
+        manejadorMemoria.imprimirEstadisticas();
+    }
+    
 
+    public static void esconderMensaje() {
+    }
+
+    public static void recuperarMensaje() {
     }
 }

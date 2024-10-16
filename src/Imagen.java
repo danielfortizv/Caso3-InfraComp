@@ -184,4 +184,14 @@ public class Imagen {
             }
         }
     }
+
+    // Método para obtener el alto de la imagen
+    public int getAlto() {
+        return alto;
+    }
+
+    // Método para obtener el ancho de la imagen
+    public int getAncho() {
+        return ancho;
+    }
 }
