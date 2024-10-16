@@ -1,7 +1,6 @@
 import java.util.ArrayList;
 import java.util.Random;
 
-
 public class Simulador {
     private ManejadorMemoria manejadorMemoria;
     private ArrayList<Integer> referencias;
@@ -12,24 +11,44 @@ public class Simulador {
     }
 
     public void iniciarSimulador() {
-        for (int i = 0; i < referencias.size(); i++) {
-            // Simula si la página fue modificada o no
-            boolean modificada = new Random().nextBoolean();
-            
-            // Accede a la página usando el índice correcto
-            manejadorMemoria.accederPagina(referencias.get(i), modificada);
+        Thread threadActualizacion = new Thread(() -> {
+            for (int i = 0; i < referencias.size(); i++) {
+                boolean modificada = new Random().nextBoolean();
+                
+                // Accede a la página usando el índice correcto
+                manejadorMemoria.accederPagina(referencias.get(i), modificada);
 
-            // Ejecuta el algoritmo de envejecimiento cada 10 accesos
-            if (i % 10 == 0) {
-                manejadorMemoria.correrAlgoritmo();
+                try {
+                    // Simula una pausa de 1 milisegundo por acceso
+                    Thread.sleep(1);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
             }
+        });
 
-            // Simula una pausa de 1 milisegundo por acceso
-            try {
-                Thread.sleep(1);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
+        Thread threadEnvejecimiento = new Thread(() -> {
+            //bucle infinito para que se ejecute mientras el programa esté en ejecución
+            while (true) {
+                try {
+                    // Aplica el algoritmo de envejecimiento cada 2 milisegundos
+                    manejadorMemoria.correrAlgoritmo();
+                    Thread.sleep(2);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
             }
+        });
+
+        
+        threadActualizacion.start(); //recorre las referencias de páginas y simular el acceso a cada una de ellas.
+        threadEnvejecimiento.start(); //aplica el algoritmo de envejecimiento
+
+        try {
+            // Esperar a que el thread de actualización termine
+            threadActualizacion.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
 
         // Imprime las estadísticas después de la simulación

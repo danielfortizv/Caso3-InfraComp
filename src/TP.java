@@ -1,6 +1,6 @@
 import java.util.LinkedHashMap;
 //Implementa el mecanismo de reemplazo usando el algoritmo NRU al buscar páginas con el bit de referencia en falso.
-
+//Se usa synchronized para que cuando un thread esté ejecutando aluno de los métodos, el otro thread espere a que termie. 
 public class TP {
     private LinkedHashMap<Integer, Pagina> tablaPaginas;
     private int marcos;
@@ -10,23 +10,23 @@ public class TP {
         this.marcos = marcos;
     }
 
-    public boolean contienePagina(int idPagina) {
+    public synchronized boolean contienePagina(int idPagina) {
         return tablaPaginas.containsKey(idPagina);
     }
 
-    public void agregarPagina(Pagina pagina) {
+    public synchronized void agregarPagina(Pagina pagina) {
         if (tablaPaginas.size() == marcos) {
             reemplazarPagina(pagina);
         }
         tablaPaginas.put(pagina.getIdPagina(), pagina);
     }
 
-    public Pagina getPagina(int idPagina) {
+    public synchronized Pagina getPagina(int idPagina) {
         return tablaPaginas.get(idPagina);
     }
 
     // Algoritmo NRU: Buscar la página con el bit de referencia en falso y reemplazar
-    private void reemplazarPagina(Pagina nuevaPagina) {
+    private synchronized void reemplazarPagina(Pagina nuevaPagina) {
         Integer paginaARemover = null;
         for (Pagina p : tablaPaginas.values()) {
             if (!p.esReferenciada()) {
@@ -41,7 +41,7 @@ public class TP {
     }
     
 
-    public void actualizarReferencia(int idPagina, boolean modificada) {
+    public synchronized void actualizarReferencia(int idPagina, boolean modificada) {
         Pagina pagina = tablaPaginas.get(idPagina);
         if (pagina != null) {
             pagina.setReferenciada(true);
@@ -51,7 +51,7 @@ public class TP {
         }
     }
 
-    public void resetReferencias() {
+    public synchronized void resetReferencias() {
         for (Pagina p: tablaPaginas.values()) {
             p.resetReferencia();
         }
