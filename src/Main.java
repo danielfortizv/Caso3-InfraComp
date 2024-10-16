@@ -23,7 +23,7 @@ public class Main {
 
             switch (opcion) {
                 case 1:
-                    generarReferencias();
+                    Simulador.generarReferencias();
                     break;
                 case 2:
                     calcularDatos();
@@ -50,6 +50,14 @@ public class Main {
     public static void calcularDatos() {
         Scanner scanner = new Scanner(System.in);
     
+        // Pedir el tamaño de página (en bytes)
+        System.out.print("Ingrese el tamaño de la página (en bytes): ");
+        int tamanoPagina = scanner.nextInt();
+        
+        // Pedir el número de caracteres (tamaño del mensaje)
+        System.out.print("Ingrese el tamaño del mensaje (en caracteres): ");
+        int tamanoMensaje = scanner.nextInt();
+        
         // Pedir el número de marcos de página
         System.out.print("Ingrese el número de marcos de página: ");
         int marcos = scanner.nextInt();
@@ -58,16 +66,19 @@ public class Main {
         System.out.print("Ingrese el número total de referencias: ");
         int totalReferencias = scanner.nextInt();
     
+        // Calcular cuántas páginas necesitamos para almacenar el mensaje
+        int totalPaginas = (int) Math.ceil((double) tamanoMensaje / tamanoPagina);
+    
         // Inicializar ManejadorMemoria con el número de marcos
         ManejadorMemoria manejadorMemoria = new ManejadorMemoria(marcos);
     
         // Simulación de acceso a las páginas
         for (int i = 0; i < totalReferencias; i++) {
-            // Simulamos que estamos accediendo a una página con ID i
-            int idPagina = i % 100;  // Por ejemplo, IDs de páginas entre 0 y 99
-            boolean modificada = new Random().nextBoolean(); // Simulación aleatoria de si la página fue modificada
+            // Determinar a qué página pertenece esta referencia
+            int idPagina = (i % totalPaginas);  // Simulamos que accedemos a las páginas
     
-            // Acceder a la página y manejar hit o miss
+            // Determinar si esta página ya está cargada en los marcos (hit) o si debe cargarse (miss)
+            boolean modificada = false;  // En este caso, no simulamos modificaciones
             manejadorMemoria.accederPagina(idPagina, modificada);
         }
     
