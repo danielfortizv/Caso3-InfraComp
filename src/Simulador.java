@@ -58,7 +58,6 @@ public class Simulador {
         // Imprime las estadísticas después de la simulación
         manejadorMemoria.imprimirEstadisticas();
     }
-
     public static void generarReferencias() {
         Scanner scanner = new Scanner(System.in);
         // Obtener datos por consola
@@ -91,7 +90,7 @@ public class Simulador {
             boolean alternar = false; // Controla la alternancia entre imagen y mensaje
             int secuenciaImagen = 0; // Para contar hasta 16 referencias de imagen
             // Suposición: El vector de mensaje usa una página distinta a la imagen
-            int mensajePaginaBase = totalPaginas + 1; // El mensaje empieza después de las páginas de la imagen
+            int mensajePaginaBase = (int) Math.ceil((double) totalBytesImagen / tamanoPagina);
             // Bucle para procesar toda la imagen y alternar con el mensaje
             for (int i = 0; i < filas; i++) {
                 for (int j = 0; j < columnas; j++) {
@@ -131,4 +130,5 @@ public class Simulador {
             e.printStackTrace();
         }
     }
+
 }
