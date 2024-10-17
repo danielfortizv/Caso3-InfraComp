@@ -47,44 +47,69 @@ public class Main {
 
     public static void generarReferencias() {  
     }
-
     public static void calcularDatos() {
         Scanner scanner = new Scanner(System.in);
     
-        // Pedir el tamaño de página (en bytes)
-        System.out.print("Ingrese el tamaño de la página (en bytes): ");
-        int tamanoPagina = scanner.nextInt();
-        
-        // Pedir el número de caracteres (tamaño del mensaje)
-        System.out.print("Ingrese el tamaño del mensaje (en caracteres): ");
-        int tamanoMensaje = scanner.nextInt();
-        
-        // Pedir el número de marcos de página
+        // Solicitar el número de marcos de página
         System.out.print("Ingrese el número de marcos de página: ");
         int marcos = scanner.nextInt();
         
-        // Pedir el número total de referencias
-        System.out.print("Ingrese el número total de referencias: ");
-        int totalReferencias = scanner.nextInt();
-    
-        // Calcular cuántas páginas necesitamos para almacenar el mensaje
-        int totalPaginas = (int) Math.ceil((double) tamanoMensaje / tamanoPagina);
+        // Solicitar el nombre del archivo de referencias
+        System.out.print("Ingrese el nombre del archivo de referencias: ");
+        String nombreArchivo = scanner.next();
     
         // Inicializar ManejadorMemoria con el número de marcos
         ManejadorMemoria manejadorMemoria = new ManejadorMemoria(marcos);
     
-        // Simulación de acceso a las páginas
-        for (int i = 0; i < totalReferencias; i++) {
-            // Determinar a qué página pertenece esta referencia
-            int idPagina = (i % totalPaginas);  // Simulamos que accedemos a las páginas
+        try {
+            // Leer las referencias del archivo
+            File file = new File(nombreArchivo);
+            Scanner fileScanner = new Scanner(file);
+            
+            // Saltar las primeras líneas del encabezado
+            while (fileScanner.hasNextLine()) {
+                String linea = fileScanner.nextLine().trim();
+                
+                // Saltar las líneas de encabezado (aquellas que comienzan con 'P=', 'NF=', 'NC=', 'NR=', 'NP=')
+                if (linea.startsWith("P=") || linea.startsWith("NF=") || linea.startsWith("NC=") ||
+                    linea.startsWith("NR=") || linea.startsWith("NP=")) {
+                    continue;
+                }
+                
+                // Ignorar líneas vacías
+                if (linea.isEmpty()) {
+                    continue;
+                }
     
-            // Determinar si esta página ya está cargada en los marcos (hit) o si debe cargarse (miss)
-            boolean modificada = false;  // En este caso, no simulamos modificaciones
-            manejadorMemoria.accederPagina(idPagina, modificada);
+                // Procesar las referencias (que empiezan con "Imagen" o "Mensaje")
+                String[] partes = linea.split(",");
+    
+                // Verificar que la línea tenga al menos dos partes (nombre y número de página)
+                if (partes.length < 2) {
+                    System.out.println("Línea no válida: " + linea);
+                    continue; // Saltar esta línea si no está bien formateada
+                }
+    
+                // La página virtual es la segunda parte de la referencia
+                int paginaVirtual = Integer.parseInt(partes[1]);
+    
+                // Para simplificar, supondremos que la referencia no es modificada (solo lectura/escritura)
+                boolean modificada = partes[3].equals("W"); // Si la última parte es "W", está modificada
+    
+                // Acceder a la página (registrará un hit o un miss)
+                manejadorMemoria.accederPagina(paginaVirtual, modificada);
+            }
+    
+            // Cerrar el archivo después de procesar todas las referencias
+            fileScanner.close();
+    
+            // Imprimir estadísticas al final
+            manejadorMemoria.imprimirEstadisticas();
+    
+        } catch (FileNotFoundException e) {
+            System.out.println("Error: Archivo no encontrado.");
+            e.printStackTrace();
         }
-    
-        // Imprimir las estadísticas al final de la simulación
-        manejadorMemoria.imprimirEstadisticas();
     }
     
 

@@ -1,6 +1,5 @@
 import java.util.LinkedHashMap;
-//Implementa el mecanismo de reemplazo usando el algoritmo NRU al buscar páginas con el bit de referencia en falso.
-//Se usa synchronized para que cuando un thread esté ejecutando aluno de los métodos, el otro thread espere a que termie. 
+
 public class TP {
     private LinkedHashMap<Integer, Pagina> tablaPaginas;
     private int marcos;
@@ -10,52 +9,65 @@ public class TP {
         this.marcos = marcos;
     }
 
+    // Verifica si la página está en la tabla
     public synchronized boolean contienePagina(int idPagina) {
         return tablaPaginas.containsKey(idPagina);
     }
 
+    // Agrega una nueva página, aplicando reemplazo si los marcos están llenos
     public synchronized void agregarPagina(Pagina pagina) {
         if (tablaPaginas.size() == marcos) {
-            reemplazarPagina(pagina);
+            reemplazarPagina();
         }
         tablaPaginas.put(pagina.getIdPagina(), pagina);
     }
 
-    public synchronized Pagina getPagina(int idPagina) {
-        return tablaPaginas.get(idPagina);
-    }
+    // Algoritmo de reemplazo basado en envejecimiento: Encuentra y reemplaza la página más envejecida
+    public synchronized void reemplazarPagina() {
+        Pagina paginaARemover = null;
+        long minContador = Long.MAX_VALUE;
 
-    // Algoritmo NRU: Buscar la página con el bit de referencia en falso y reemplazar
-    private synchronized void reemplazarPagina(Pagina nuevaPagina) {
-        Integer paginaARemover = null;
+        // Busca la página con el contador de envejecimiento más bajo
         for (Pagina p : tablaPaginas.values()) {
-            if (!p.esReferenciada()) {
-                paginaARemover = p.getIdPagina();
-                System.out.println("Reemplazando página " + paginaARemover + " por página " + nuevaPagina.getIdPagina());
-                break;
+            if (p.getContadorEnvejecimiento() < minContador) {
+                minContador = p.getContadorEnvejecimiento();
+                paginaARemover = p;
             }
         }
+
         if (paginaARemover != null) {
-            tablaPaginas.remove(paginaARemover);
+            System.out.println("Reemplazando página " + paginaARemover.getIdPagina());
+            tablaPaginas.remove(paginaARemover.getIdPagina());
         }
     }
-    
 
+    // Actualiza la referencia de la página y marca que ha sido referenciada
     public synchronized void actualizarReferencia(int idPagina, boolean modificada) {
         Pagina pagina = tablaPaginas.get(idPagina);
         if (pagina != null) {
-            pagina.setReferenciada(true);
+            pagina.setReferenciada(true); // Marcar como referenciada
             if (modificada) {
-                pagina.setModificada(true);
+                pagina.setModificada(true); // Si fue modificada, marcarla también
             }
         }
     }
 
+    // Método para envejecer todas las páginas: divide el contador de envejecimiento por 2
+    public synchronized void envejecerPaginas() {
+        for (Pagina p : tablaPaginas.values()) {
+            p.envejecer();
+        }
+    }
+
+    // Resetea las referencias (equivalente a borrar el bit de referencia)
     public synchronized void resetReferencias() {
         for (Pagina p: tablaPaginas.values()) {
             p.resetReferencia();
         }
     }
-    
-}
 
+    // Verifica si los marcos están llenos
+    public synchronized boolean estaLleno() {
+        return tablaPaginas.size() == marcos;
+    }
+}

@@ -61,49 +61,37 @@ public class Simulador {
 
     public static void generarReferencias() {
         Scanner scanner = new Scanner(System.in);
-        
         // Obtener datos por consola
         System.out.print("Ingrese el tamaño de página (en bytes): ");
         int tamanoPagina = scanner.nextInt();
-        
         System.out.print("Ingrese el nombre del archivo de imagen (BMP): ");
         String nombreArchivo = scanner.next();
-
         try {
             // Leer la imagen
-            Imagen imagen = new Imagen(nombreArchivo); // Clase Imagen para leer el archivo BMP
-            
-            int filas = imagen.getAlto();    // Obtener el alto de la imagen en píxeles
-            int columnas = imagen.getAncho(); // Obtener el ancho de la imagen en píxeles
-            int tamanoTotalImagen = filas * columnas * 3; // Total de bytes de la imagen (3 bytes por píxel en formato RGB)
+            Imagen imagen = new Imagen(nombreArchivo);
+            int filas = imagen.alto;
+            int columnas = imagen.ancho;
             int largo = imagen.leerLongitud();
-            // Calcular el número de páginas necesarias para la imagen
-            int totalPaginas = (int) Math.ceil((double) tamanoTotalImagen / tamanoPagina);
-            
-            // Calcular el número total de referencias (cada píxel tiene 3 colores)
-            int totalReferencias = filas * columnas * 3; // Referencias para la imagen
-            int mensajeReferencias = (totalReferencias / 15) * 3; // Tres referencias de mensaje cada 15 referencias de imagen
+            int totalBytesImagen = filas * columnas * 3; // Tamaño en bytes de la imagen
+            int totalBytesMensaje = largo;
+            int totalPaginas = (int) Math.ceil((double) (totalBytesImagen + totalBytesMensaje) / tamanoPagina);
             int referenciasTotales = 16 + (17*largo);
-            
+            //res= longitd/p
             // Generar el archivo de referencias
             FileWriter writer = new FileWriter("referencias.txt");
-
             // Escribir los datos iniciales en el archivo
             writer.write("P=" + tamanoPagina + "\n");
             writer.write("NF=" + filas + "\n");
             writer.write("NC=" + columnas + "\n");
-            writer.write("NR=" + referenciasTotales + "\n");  // Número de referencias basado en la imagen y mensaje
+            writer.write("NR=" + referenciasTotales + "\n");
             writer.write("NP=" + totalPaginas + "\n");
-
             // Variables para controlar las referencias y el mensaje
             int referenciaIndex = 0; // Índice de referencia para desplazamiento dentro de la página
             int mensajeIndex = 0; // Índice para el vector de mensaje
             boolean alternar = false; // Controla la alternancia entre imagen y mensaje
             int secuenciaImagen = 0; // Para contar hasta 16 referencias de imagen
-
             // Suposición: El vector de mensaje usa una página distinta a la imagen
             int mensajePaginaBase = totalPaginas + 1; // El mensaje empieza después de las páginas de la imagen
-
             // Bucle para procesar toda la imagen y alternar con el mensaje
             for (int i = 0; i < filas; i++) {
                 for (int j = 0; j < columnas; j++) {
@@ -136,10 +124,8 @@ public class Simulador {
                     }
                 }
             }
-
             writer.close();
             System.out.println("Referencias generadas en 'referencias.txt'");
-
         } catch (IOException e) {
             System.out.println("Error al generar el archivo de referencias.");
             e.printStackTrace();

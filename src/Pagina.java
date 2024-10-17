@@ -1,28 +1,26 @@
 public class Pagina {
-    
     private int idPagina;
     private boolean referenciada; 
     private boolean modificada;
-    private long ultimoAccesso;
+    private long contadorEnvejecimiento; // Contador de envejecimiento
 
     public Pagina(int idPagina) {
         this.idPagina = idPagina;
         this.referenciada = false;
         this.modificada = false;
-        this.ultimoAccesso = System.currentTimeMillis();
+        this.contadorEnvejecimiento = 0;
     }
 
     public int getIdPagina() {
         return idPagina;
     }
 
-   public boolean esReferenciada () {
+    public boolean esReferenciada() {
         return referenciada;
     }
 
     public void setReferenciada(boolean referenciada) {
         this.referenciada = referenciada;
-        this.ultimoAccesso = System.currentTimeMillis();
     }
 
     public boolean esModificada() {
@@ -33,11 +31,21 @@ public class Pagina {
         this.modificada = modificada;
     }
 
-    public long getUltimoAcesso() {
-        return ultimoAccesso;
+    public long getContadorEnvejecimiento() {
+        return contadorEnvejecimiento;
     }
 
+    // Método para envejecer la página
+    public void envejecer() {
+        contadorEnvejecimiento = contadorEnvejecimiento >> 1; // Dividir el contador por 2
+        if (referenciada) {
+            contadorEnvejecimiento |= (1L << 31); // Añadir 1 en el bit más alto si está referenciada
+        }
+        referenciada = false; // Resetear el bit de referencia después de envejecer
+    }
+
+    // Método para resetear la referencia
     public void resetReferencia() {
-        this.referenciada = false; // Reinica R (bit de referencia)
+        this.referenciada = false;
     }
 }
