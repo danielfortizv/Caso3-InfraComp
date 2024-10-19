@@ -107,6 +107,7 @@ public class Imagen {
             if ( i % 1000 == 0)
                 System.out.println("Van " + i + " caracteres de " + longitud);
         }
+        System.out.println("Van " + longitud + " caracteres de " + longitud);
     }
 
     /**
