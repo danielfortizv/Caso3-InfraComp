@@ -8,7 +8,7 @@ public class Main {
         boolean salir = false;
 
         while (!salir) {
-            System.out.println("Menú:");
+            System.out.println("\nMenú:");
             System.out.println("1. Generar referencias");
             System.out.println("2. Calcular fallas de página, hits y tiempos");
             System.out.println("3. Esconder mensaje en imagen");
@@ -22,7 +22,7 @@ public class Main {
                 case 1:
                     Simulador.generarReferencias();
                     break;
-                    //Archivos/caso2-parrots_mod.bmp
+                    //caso2-parrots_mod
                 case 2:
                     calcularDatos();
                     break;
@@ -49,9 +49,7 @@ public class Main {
         int marcos = scanner.nextInt();
         
         // Solicitar el nombre del archivo de referencias
-        System.out.print("Ingrese el nombre del archivo de referencias: ");
-        String nombreArchivo = scanner.next();
-
+        String nombreArchivo = "referencias.txt";
         // Inicializar ManejadorMemoria con el número de marcos
         ManejadorMemoria manejadorMemoria = new ManejadorMemoria(marcos);
 
@@ -110,11 +108,24 @@ public class Main {
     public static void esconderMensaje() {
         Scanner scanner = new Scanner(System.in);
 
-        System.out.print("Ingrese la imagen a modificar: ");
-        String imagen = scanner.nextLine();
+        System.out.print("Ingrese la imagen a modificar (Solo pon el nombre sin la extensión): ");
+        String imagen = "Archivos/" + scanner.nextLine() + ".bmp";
 
-        System.out.print("Ingrese el mensaje a esconder: ");
-        String mensaje = scanner.nextLine();
+        System.out.print("Ingrese el nombre del archivo con el mensaje (Sin extensión): ");
+        String archivo = "Archivos/" + scanner.nextLine() + ".txt";
+
+        File file = new File(archivo);
+        String mensaje = "";
+        try {
+            Scanner fileScanner = new Scanner(file);
+            while (fileScanner.hasNextLine()) {
+                mensaje += fileScanner.nextLine() + "\n";
+            }
+            fileScanner.close();
+        } catch (FileNotFoundException e) {
+            System.out.println("Error: Archivo no encontrado.");
+            e.printStackTrace();
+        }
 
         Imagen img = new Imagen(imagen);
         img.esconder(mensaje.toCharArray(), mensaje.length());
@@ -127,8 +138,8 @@ public class Main {
     public static void recuperarMensaje() {
         Scanner scanner = new Scanner(System.in);
 
-        System.out.print("Ingrese la imagen a recuperar: ");
-        String imagen = scanner.nextLine();
+        System.out.print("Ingrese la imagen a recuperar (Solo pon el nombre sin la extensión): ");
+        String imagen = "Archivos/" + scanner.nextLine() + ".bmp";
 
         Imagen img = new Imagen(imagen);
         char[] mensajeRecuperado = new char[img.leerLongitud()];

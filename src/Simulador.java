@@ -63,8 +63,8 @@ public class Simulador {
         // Obtener datos por consola
         System.out.print("Ingrese el tamaño de página (en bytes): ");
         int tamanoPagina = scanner.nextInt();
-        System.out.print("Ingrese el nombre del archivo de imagen (BMP): ");
-        String nombreArchivo = scanner.next();
+        System.out.print("Ingrese el nombre del archivo de imagen (Solo pon el nombre sin la extensión): ");
+        String nombreArchivo = "Archivos/" + scanner.next() + ".bmp";
         
         try {
             // Leer la imagen
@@ -86,7 +86,7 @@ public class Simulador {
             writer.write("NC=" + columnas + "\n");
             writer.write("NR=" + referenciasTotales + "\n");
             writer.write("NP=" + totalPaginas + "\n");
-    
+            
             // Variables para controlar las referencias y el mensaje
             int referenciaIndex = 0; // Índice de referencia para desplazamiento dentro de la página
             int mensajeIndex = 0; // Índice para el vector de mensaje
